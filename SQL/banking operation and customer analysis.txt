@@ -6,7 +6,7 @@ use bankingdb;
 select count(*) as total_customers
 from customer;
 
--- number of customers by gender.
+-- number of customers by gender..
 
 select gender, count(*) as customer_count
 from customer

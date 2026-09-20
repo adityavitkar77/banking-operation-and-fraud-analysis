@@ -230,7 +230,7 @@ account_id,customer_id,branch_id,account_type,balance,open_date,status
 229,56862,121,Current,6691.32,2010-08-23,Active
 230,5018,38,Fixed Deposit,61228.4,2021-08-05,Active
 231,37638,82,Savings,5884.33,2014-07-02,Active
-232,44475,1,Savings,29667.49,2009-03-24,Active
+232,44475,1,Savings,29667.49,2009-03-24,Active..
 233,32543,127,Salary,4017.6,2020-02-21,Active
 234,48154,72,Savings,13683.98,2005-09-21,Active
 235,31315,91,Savings,31306.12,2017-02-03,Active

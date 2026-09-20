@@ -261,6 +261,6 @@ Banking-Transactions-and-Fraud-Analysis/
 │   ├── fraud_analysis.png
 │   
 │
-└── README.md
+└── README.MD
 
 ```
