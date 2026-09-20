@@ -1,0 +1,230 @@
+create database bankingdb;
+use bankingdb;
+
+-- total number of customers.
+
+select count(*) as total_customers
+from customer;
+
+-- number of customers by gender.
+
+select gender, count(*) as customer_count
+from customer
+group by gender;
+
+-- total number of accounts by account type.
+
+select account_type, count(*) as total_accounts
+from account
+group by account_type;
+
+-- the average account balance by account type.
+
+select account_type,
+round(avg(balance), 2) as avg_balance
+from account
+group by account_type;
+
+-- top 10 customers with the highest total account balance
+
+select c.customer_id,
+c.name,
+round(sum(a.balance), 2) as total_balance
+from customer c
+join account a
+on c.customer_id = a.customer_id
+group by c.customer_id, c.name
+order by total_balance desc
+limit 10;
+
+-- total transaction amount and number of transactions.
+
+select count(*) as total_transactions,
+round(sum(amount), 2) as total_transaction_amount
+from transaction;
+
+-- total transaction amount by transaction type.
+
+select txn_type,
+count(*) as transaction_count,
+round(sum(amount), 2) as total_amount
+from transaction
+group by txn_type
+order by total_amount desc;
+
+-- total transaction amount by channel.
+
+select channel,
+count(*) as transaction_count,
+round(sum(amount), 2) as total_amount
+from transaction
+group by channel
+order by total_amount desc;
+
+-- monthly transaction amount.
+
+select date_format(txn_date, '%Y-%m') as transaction_month,
+count(*) as transaction_count,
+round(sum(amount), 2) as total_amount
+from transaction
+group by date_format(txn_date, '%Y-%m')
+order by transaction_month;
+
+
+-- customers whose total transaction amount is greater than 1 lakh.
+
+select a.customer_id,
+round(sum(t.amount), 2) as total_transaction_amount
+from account a
+join transaction t
+on a.account_id = t.account_id
+group by a.customer_id
+having sum(t.amount) > 100000
+order by total_transaction_amount desc;
+
+--  top 10 customers based on total transaction amount.
+
+select c.customer_id,
+c.name,
+round(sum(t.amount), 2) as total_transaction_amount
+from customer c
+join account a
+on c.customer_id = a.customer_id
+join transaction t
+on a.account_id = t.account_id
+group by c.customer_id, c.name
+order by total_transaction_amount desc
+limit 10;
+
+-- average transaction amount for each account type.
+
+select a.account_type,
+round(avg(t.amount), 2) as avg_transaction_amount
+from account a
+join transaction t
+on a.account_id = t.account_id
+group by a.account_type
+order by avg_transaction_amount desc;
+
+
+-- total number of card transactions and total fraud transaction
+
+select count(*) as total_card_transactions,
+sum(is_fraud) as total_fraud_transactions
+from cardtransaction;
+
+
+--  fraud rate percentage.
+select round(100.0 * sum(is_fraud) / count(*),2) as fraud_rate_percentage
+from cardtransaction;
+
+
+-- total fraud amount by merchant category
+select merchant_category,
+count(*) as fraud_transactions,
+round(sum(amount), 2) as fraud_amount
+from cardtransaction
+where is_fraud = 1
+group by merchant_category
+order by fraud_amount desc;
+
+-- total fraud amount by merchant category.
+
+select merchant_category,
+count(*) as fraud_transactions,
+round(sum(amount), 2) as fraud_amount
+from cardtransaction
+where is_fraud = 1
+group by merchant_category
+order by fraud_amount desc;
+
+-- top 10 customers with the highest fraud transaction amount.
+
+select c.customer_id,
+c.name,
+round(sum(ct.amount), 2) as fraud_amount
+from customer c
+join card cd
+on c.customer_id = cd.customer_id
+join cardtransaction ct
+on cd.card_id = ct.card_id
+where ct.is_fraud = 1
+group by c.customer_id, c.name
+order by fraud_amount desc
+limit 10;
+
+-- number of loans and total loan amount by loan type.
+
+select loan_type,
+count(*) as total_loans,
+round(sum(loan_amount), 2) as total_loan_amount
+from loan
+group by loan_type
+order by total_loan_amount desc;
+
+-- number of loans by loan status.
+
+select status,
+count(*) as loan_count
+from loan
+group by status
+order by loan_count desc;
+
+-- average interest rate by loan type.
+
+select loan_type,
+round(avg(interest_rate), 2) as avg_interest_rate
+from loan
+group by loan_type
+order by avg_interest_rate desc;
+
+
+-- customers who have taken more than one loan.
+
+select customer_id,
+count(*) as total_loans
+from loan
+group by customer_id
+having count(*) > 1
+order by total_loans desc;
+
+
+-- total amount paid and total interest paid for all loan
+
+select round(sum(amount_paid), 2) as total_amount_paid,
+round(sum(interest_component), 2) as total_interest_paid,
+round(sum(principal_component), 2) as total_principal_paid
+from loanpayment;
+
+
+-- loans with late payments.
+
+select loan_id,
+count(*) as late_payment_count
+from loanpayment
+where late_payment_flag = 1
+group by loan_id
+order by late_payment_count desc;
+
+-- number of customers and total account balance by branch.
+
+
+select b.branch_id,
+b.branch_name,
+count(distinct a.customer_id) as total_customers,
+round(sum(a.balance), 2) as total_balance
+from branch b
+join account a
+on b.branch_id = a.branch_id
+group by b.branch_id, b.branch_name
+order by total_balance desc;
+
+
+-- number of support tickets by issue type and average satisfaction score.
+
+select issue_type,
+count(*) as ticket_count,
+round(avg(satisfaction_score), 2) as avg_satisfaction
+from supportticket
+group by issue_type
+order by ticket_count desc;
